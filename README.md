@@ -1,47 +1,40 @@
-# JobLens
+# JobLens — Đọc hiểu tin tuyển dụng
 
-JobLens reads a job posting and brings its main details together. It separates required skills from nice-to-have skills and keeps a quote from the original text so each item can be checked.
+Dán một tin tuyển dụng tiếng Việt, rồi hỏi về những yêu cầu trong đó. Trợ lý có thể tách kỹ năng bắt buộc, kỹ năng được ưu tiên, nơi làm việc và các thông tin cần chú ý. Bạn có thể hỏi tiếp trong cùng cuộc trao đổi.
 
-The result can be saved as JSON. If a posting leaves out its salary or location, that field stays empty.
+Bản này chỉnh từ ví dụ Chatbot của Streamlit. Luồng chat được giữ đơn giản; phần thay đổi chính là câu chữ trên màn hình và lời hướng dẫn mô hình đọc tin tuyển dụng bằng tiếng Việt.
 
-## Run the app
+## Chạy ứng dụng
 
-Use Python 3.12. On Windows, run `CAI_DAT.bat` once, then open `CHAY_DEMO.bat`.
-
-You can also install and run it from a terminal:
+Cài Python 3.12. Trên Windows, chạy `CAI_DAT.bat`, sau đó mở `CHAY_DEMO.bat`.
 
 ```bash
 python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
 
-The sample view shows three prepared examples. To read a new posting, connect a model and select **Phân tích bằng LLM**.
-
-## Connect a model
-
-Install [Ollama](https://ollama.com/download), then run:
+Ứng dụng cần kết nối một mô hình thật để trả lời. Với thiết lập mặc định, cài [Ollama](https://ollama.com/download), mở terminal và tải mô hình:
 
 ```bash
-ollama pull llama3.2:3b
+ollama pull qwen2.5:1.5b
 ```
 
-Copy `.env.example` to `.env` and restart the app. The example settings use Ollama on your own computer. You can change the model name in that file.
+Giữ Ollama hoạt động, rồi mở lại ứng dụng. Lần tải đầu cần mạng và dung lượng để lưu mô hình. Sau đó có thể chạy trên máy của bạn.
 
-Another service can be used by setting `LLM_PROVIDER=compatible`, its address ending in `/v1`, the model name and your API key. The service needs to support JSON schema responses. Keep your key in `.env`.
+Nếu dùng dịch vụ khác, điền địa chỉ máy chủ, tên mô hình và khóa truy cập trong phần bên trái. Dịch vụ đó phải hỗ trợ cách gọi tương thích OpenAI. Phí sử dụng phụ thuộc dịch vụ bạn chọn.
 
-## Inside the project
+## Thử với một tin ngắn
 
-`app.py` contains the screen and buttons. `joblens/extraction.py` defines the information to collect and checks it against the posting. `joblens/llm.py` sends the request to the model.
+“Công ty Sen tuyển thực tập sinh AI tại Hà Nội. Yêu cầu biết Python và Git cơ bản; có SQL là lợi thế. Không yêu cầu kinh nghiệm. Làm việc từ thứ Hai đến thứ Sáu.”
 
-The checks can catch an invented value or a missing quote. They cannot guarantee that every skill is placed in the right group, so the original text remains useful when reviewing a result.
+Bạn có thể hỏi: “Kỹ năng nào bắt buộc và kỹ năng nào chỉ được ưu tiên?”
 
-To run the checks:
+Mô hình được yêu cầu trả lời bằng tiếng Việt và ghi rõ thông tin chưa được nêu. Nó vẫn có thể hiểu sai, nên bạn cần đối chiếu lại với tin gốc.
 
-```bash
-python -m pip install -r requirements-dev.txt
-python -m pytest -q
-```
+## Đọc code từ đâu?
 
-With a model running, `python evaluate.py` compares its answers with the three prepared examples. This is a small starting check, rather than a broad measure of model quality.
+Mở `app.py`. Phần đầu tạo các ô kết nối, tiếp theo lưu nội dung cuộc trao đổi, rồi gửi câu hỏi đến mô hình khi người dùng nhập tin.
 
-Built with Python, Streamlit and Pydantic. Project code is available under the MIT license.
+Bản này không huấn luyện LLM và không có kết quả trả lời mẫu được dùng thay cho mô hình thật. Các kiểm tra tự động chỉ kiểm tra luồng giao diện với phản hồi giả lập, chưa đánh giá chất lượng trả lời của mô hình.
+
+Xem [NGUON.md](NGUON.md) để đối chiếu ví dụ gốc và phần đã chỉnh. Giữ giấy phép Apache 2.0 của Streamlit.
